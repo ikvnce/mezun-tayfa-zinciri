@@ -83,6 +83,10 @@
         .popup .cok-verimsiz {
             background-color: #F44336; /* Kırmızı */
         }
+        .popup .reset {
+            background-color: #9E9E9E; /* Gri */
+            color: black;
+        }
         .footer {
             margin-top: 20px;
         }
@@ -98,6 +102,7 @@
         <button class="verimli">Verimli</button>
         <button class="verimsiz">Verimsiz</button>
         <button class="cok-verimsiz">Çok Verimsiz</button>
+        <button class="reset">Temizle</button>
     </div>
 
     <script>
@@ -123,25 +128,34 @@
                 dayDiv.addEventListener('click', () => {
                     selectedDayDiv = dayDiv;
                     popup.style.display = 'block';
+                    // Position the popup near the clicked day
+                    popup.style.left = `${dayDiv.getBoundingClientRect().left}px`;
+                    popup.style.top = `${dayDiv.getBoundingClientRect().bottom}px`;
                 });
+
                 calendar.appendChild(dayDiv);
                 currentDate.setDate(currentDate.getDate() + 1);
             }
 
             // Popup button event listeners
-            const buttons = popup.querySelectorAll('button');
-            buttons.forEach(button => {
+            const popupButtons = popup.querySelectorAll('button');
+            popupButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const colorClass = button.className;
                     if (selectedDayDiv) {
-                        selectedDayDiv.className = `day ${colorClass}`;
-                        localStorage.setItem(selectedDayDiv.dataset.date, colorClass);
+                        if (colorClass === 'reset') {
+                            selectedDayDiv.className = 'day';
+                            localStorage.removeItem(selectedDayDiv.dataset.date);
+                        } else {
+                            selectedDayDiv.className = `day ${colorClass}`;
+                            localStorage.setItem(selectedDayDiv.dataset.date, colorClass);
+                        }
                     }
                     popup.style.display = 'none';
                 });
             });
 
-            // Close popup on click outside
+            // Close popups on click outside
             document.addEventListener('click', (event) => {
                 if (!popup.contains(event.target) && !document.querySelector('.day:hover')) {
                     popup.style.display = 'none';
@@ -153,3 +167,4 @@
     </script>
 </body>
 </html>
+
